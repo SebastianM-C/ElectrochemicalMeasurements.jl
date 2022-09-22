@@ -1,0 +1,13 @@
+name = "ElectrochemicalMeasurements"
+uuid = "03e9b728-c705-44f9-abd3-9a472a428a35"
+authors = ["Sebastian Micluța-Câmpeanu <m.c.sebastian95@gmail.com> and contributors"]
+version = "0.1.0"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
