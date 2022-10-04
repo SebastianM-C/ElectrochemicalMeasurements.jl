@@ -1,6 +1,6 @@
 module ElectrochemicalMeasurements
 
-export EISMeasurement, Nyquist, Bode
+export EISMeasurement, Nyquist, Bode, GCDMeasurement, CVMeasurement
 
 using DataSets
 using CSV, DataFrames
@@ -20,5 +20,6 @@ Base.getproperty(m::AbstractMeasurement, name::String) = procedure(m)[name]
 
 include("eis.jl")
 include("gcd.jl")
+include("cv.jl")
 
 end
