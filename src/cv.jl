@@ -1,11 +1,17 @@
-struct CVMeasurement{D} <: AbstractMeasurement
-    dataset::D
+struct CVMeasurement <: AbstractMeasurement
+    dataset::DataSet
+    global_procedure::Dict{String,Any}
 end
 
-default_select(cv::CVMeasurement) = [cv."current", cv."potential", cv."scan"]
+function CVMeasurement(project::MeasurementsProject, name)
+    d = dataset(project, name)
+    proc = select_procedure(d, project.procedures)
+    CVMeasurement(d, proc)
+end
 
 function take_subset(cv::CVMeasurement, df)
-    fd = df[df[!, cv."scan"] .== cv."select_scan", :]
+    select_scan = procedure(cv)["preprocessing"]["select_scan"]
+    fd = df[df[!, cv."scan"].==select_scan, :]
     push!(fd, fd[1, :])
 end
 

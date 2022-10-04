@@ -1,5 +1,12 @@
-struct GCDMeasurement{D} <: AbstractMeasurement
-    dataset::D
+struct GCDMeasurement <: AbstractMeasurement
+    dataset::DataSet
+    global_procedure::Dict{String,Any}
+end
+
+function GCDMeasurement(project::MeasurementsProject, name)
+    d = dataset(project, name)
+    proc = select_procedure(d, project.procedures)
+    GCDMeasurement(d, proc)
 end
 
 default_select(gcd::GCDMeasurement) = [gcd."potential", gcd."time"]
