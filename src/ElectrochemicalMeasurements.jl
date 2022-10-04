@@ -8,8 +8,8 @@ using RecipesBase
 
 abstract type AbstractMeasurement end
 
-metadata(dataset::DataSet) = dataset.conf["metadata"]
-metadata(m::AbstractMeasurement) = metadata(m.dataset)
+procedure(dataset::DataSet) = dataset.conf["procedure"]
+procedure(m::AbstractMeasurement) = procedure(m.dataset)
 
 function Base.open(m::AbstractMeasurement, select=default_select(m))
     CSV.read(open(IO, m.dataset), DataFrame; select)
