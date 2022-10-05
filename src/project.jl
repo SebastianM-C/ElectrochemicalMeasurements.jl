@@ -1,6 +1,6 @@
-struct MeasurementsProject{D,P} <: DataSets.AbstractDataProject
+struct MeasurementsProject{D} <: DataSets.AbstractDataProject
     data_project::D
-    procedures::P
+    procedures::Vector{Any}
 end
 
 function load_project(path::AbstractString)
@@ -23,9 +23,15 @@ end
 
 DataSets.project_name(p::MeasurementsProject) = DataSets.project_name(p.data_project)
 
-Base.pairs(p::MeasurementsProject) = pairs(p.data_project)
+Base.iterate(p::MeasurementsProject, st=nothing) = iterate(p.data_project, st)
+Base.keys(p::MeasurementsProject) = keys(p.data_project)
+
+function Base.get(p::MeasurementsProject, name::AbstractString, default)
+    get(p.data_project, name, default)
+end
 
 procedure(dataset::DataSet) = dataset.conf["procedure"]
+procedure(p::Pair{String,DataSet}) = procedure(last(p))
 
 function procedure(m::AbstractMeasurement)
     global_procedure = m.global_procedure
@@ -49,3 +55,4 @@ end
 
 metadata(m::AbstractMeasurement) = metadata(m.dataset)
 metadata(dataset::DataSet) = dataset.conf["metadata"]
+metadata(p::Pair{String,DataSet}) = metadata(last(p))

@@ -1,7 +1,7 @@
 module ElectrochemicalMeasurements
 
 export MeasurementsProject, EISMeasurement, Nyquist, Bode, GCDMeasurement, CVMeasurement,
-    load_project
+    load_project, metadata, procedure, select_measurement
 
 using DataSets
 using CSV, DataFrames
@@ -28,5 +28,7 @@ include("project.jl")
 include("eis.jl")
 include("gcd.jl")
 include("cv.jl")
+include("filter.jl")
+include("utils.jl")
 
 end
