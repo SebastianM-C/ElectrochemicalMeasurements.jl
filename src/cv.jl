@@ -25,3 +25,13 @@ end
         df[!, V], df[!, I]
     end
 end
+
+@recipe function f(cvs::Vector{<:CVMeasurement})
+    uq_meta = find_unique_metadata(cvs)
+    for cv in cvs
+        @series begin
+            label --> unique_metadata_legend(cv, uq_meta)
+            cv
+        end
+    end
+end

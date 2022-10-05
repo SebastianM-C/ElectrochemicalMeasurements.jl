@@ -29,3 +29,13 @@ end
         df[!, t], df[!, V]
     end
 end
+
+@recipe function f(gcds::Vector{<:GCDMeasurement})
+    uq_meta = find_unique_metadata(gcds)
+    for gcd in gcds
+        @series begin
+            label --> unique_metadata_legend(gcd, uq_meta)
+            gcd
+        end
+    end
+end
