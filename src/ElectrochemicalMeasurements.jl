@@ -1,11 +1,16 @@
 module ElectrochemicalMeasurements
 
 export MeasurementsProject, EISMeasurement, Nyquist, Bode, GCDMeasurement, CVMeasurement,
-    load_project, metadata, procedure, select_measurement
+    load_project, metadata, procedure, analysis, unitful_metadata, unitful_analysis,
+    select_measurement,
+    capacitance, power, energy
 
 using DataSets
 using CSV, DataFrames
+using NumericalIntegration
 using RecipesBase
+using Unitful
+using OffsetArrays
 using TOML
 
 abstract type AbstractMeasurement end
@@ -30,5 +35,7 @@ include("gcd.jl")
 include("cv.jl")
 include("filter.jl")
 include("utils.jl")
+include("analysis/cv_area.jl")
+include("analysis/capacitance.jl")
 
 end

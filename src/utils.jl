@@ -39,6 +39,36 @@ function select_procedure(dataset, procedures)
     only(filter(p -> p["name"] == proc_name, procedures))
 end
 
-metadata(m::AbstractMeasurement) = metadata(m.dataset)
 metadata(dataset::DataSet) = dataset.conf["metadata"]
+metadata(m::AbstractMeasurement) = metadata(m.dataset)
 metadata(p::Pair{String,DataSet}) = metadata(last(p))
+
+analysis(dataset::DataSet) = dataset.conf["procedure"]["analysis"]
+analysis(m::AbstractMeasurement) = procedure(m)["analysis"]
+
+function make_unitful_compatible(str::AbstractString)
+    split_str = split(str, ' ')
+    if length(split_str) == 2
+        val = first(split_str)
+        if endswith(str, ')')
+            units = strip(last(split_str), ['(', ')'])
+        elseif endswith(str, ']')
+            units = strip(last(split_str), ['[', ']'])
+        else
+            units = last(split_str)
+        end
+        val*units
+    else
+        str
+    end
+end
+
+function unitful_metadata(m, key)
+    str = metadata(m)[key]
+    uparse(make_unitful_compatible(str))
+end
+
+function unitful_analysis(m, key)
+    str = analysis(m)[key]
+    uparse(make_unitful_compatible(str))
+end
