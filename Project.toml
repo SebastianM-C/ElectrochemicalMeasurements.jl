@@ -10,6 +10,7 @@ DataSets = "c9661210-8a83-48f0-b833-72e62abce419"
 RecipesBase = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
 
 [compat]
+DataSets = "0.2"
 julia = "1"
 
 [extras]
