@@ -29,30 +29,3 @@ Base.keys(p::MeasurementsProject) = keys(p.data_project)
 function Base.get(p::MeasurementsProject, name::AbstractString, default)
     get(p.data_project, name, default)
 end
-
-procedure(dataset::DataSet) = dataset.conf["procedure"]
-procedure(p::Pair{String,DataSet}) = procedure(last(p))
-
-function procedure(m::AbstractMeasurement)
-    global_procedure = m.global_procedure
-    dataset_procedure = procedure(m.dataset)
-
-    default = copy(global_procedure)
-    if !all(keys(dataset_procedure) .== "name")
-        for key in keys(dataset_procedure)
-            default[key] = dataset_procedure[key]
-        end
-    end
-
-    return default
-end
-
-function select_procedure(dataset, procedures)
-    dataset_proc = procedure(dataset)
-    proc_name = dataset_proc["name"]
-    only(filter(p -> p["name"] == proc_name, procedures))
-end
-
-metadata(m::AbstractMeasurement) = metadata(m.dataset)
-metadata(dataset::DataSet) = dataset.conf["metadata"]
-metadata(p::Pair{String,DataSet}) = metadata(last(p))
