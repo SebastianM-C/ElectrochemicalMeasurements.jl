@@ -82,12 +82,7 @@ end
 
 function discharge_area(cv::CVMeasurement, quadrant)
     df = open(cv)
-    a = analysis(cv)
-    if haskey(a, "fixed_ΔV")
-        fixed_ΔV = unitful_analysis(cv, "fixed_ΔV")
-    else
-        fixed_ΔV = nothing
-    end
+    fixed_ΔV = unitful_analysis(cv, "fixed_ΔV")
     I, V = df[!, cv."current"], df[!, cv."potential"]
     t = df[!, cv."time"]
 

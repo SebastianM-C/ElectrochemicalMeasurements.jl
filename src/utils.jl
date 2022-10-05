@@ -69,6 +69,15 @@ function unitful_metadata(m, key)
 end
 
 function unitful_analysis(m, key)
-    str = analysis(m)[key]
-    uparse(make_unitful_compatible(str))
+    if haskey(procedure(m), "analysis")
+        a = analysis(m)
+        if haskey(a, key)
+            str = a[key]
+            uparse(make_unitful_compatible(str))
+        else
+            nothing
+        end
+    else
+        nothing
+    end
 end
