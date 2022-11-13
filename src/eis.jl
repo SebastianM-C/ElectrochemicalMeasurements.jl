@@ -1,37 +1,60 @@
-struct EISMeasurement{D} <: AbstractMeasurement
-    dataset::D
+struct EISMeasurement <: AbstractMeasurement
+    dataset::DataSet
+    global_procedure::Dict{String,Any}
 end
 
-function default_select(eis::EISMeasurement)
-    [eis."Z1_name", eis."Z2_name", eis."phase", eis."freq"]
+function EISMeasurement(project::MeasurementsProject, name)
+    d = dataset(project, name)
+    proc = select_procedure(d, project.procedures)
+    EISMeasurement(d, proc)
 end
 
-@userplot struct Nyquist{T<:Tuple{<:EISMeasurement}}
+@userplot struct Nyquist{T}
     args::T
 end
 
-@recipe function f(n::Nyquist)
+@recipe function f(n::Nyquist{<:Tuple{<:EISMeasurement}})
     eis = n.args[1]
     df = open(eis)
-    z1 = eis."Z1_name"
-    z2 = eis."Z2_name"
-    Z_max = max(maximum(df[!, z1]), maximum(df[!, z2]))
+    re_Z = eis."Re_Z"
+    im_Z = eis."Im_Z"
+    Z_max = max(maximum(df[!, re_Z]), maximum(df[!, im_Z]))
     @series begin
         seriestype --> :scatter
-        xlabel --> z1
-        ylabel --> z2
+        xlabel --> re_Z
+        ylabel --> im_Z
         aspect_ratio := 1
-        xlims --> (0, Z_max*1.05)
-        ylims --> (0, Z_max*1.05)
-        df[!, z1], df[!, z2]
+        xlims --> (0, Z_max * 1.05)
+        ylims --> (0, Z_max * 1.05)
+        df[!, re_Z], df[!, im_Z]
     end
 end
 
-@userplot struct Bode{T<:Tuple{<:EISMeasurement}}
+@recipe function f(n::Nyquist{<:Tuple{Vector{<:EISMeasurement}}})
+    uq_meta = find_unique_metadata(n.args[1])
+    for eis in n.args[1]
+        df = open(eis)
+        re_Z = eis."Re_Z"
+        im_Z = eis."Im_Z"
+        Z_max = max(maximum(df[!, re_Z]), maximum(df[!, im_Z]))
+        @series begin
+            seriestype --> :scatter
+            xlabel --> re_Z
+            ylabel --> im_Z
+            aspect_ratio := 1
+            xlims --> (0, Z_max * 1.05)
+            ylims --> (0, Z_max * 1.05)
+            label --> unique_metadata_legend(eis, uq_meta)
+            df[!, re_Z], df[!, im_Z]
+        end
+    end
+end
+
+@userplot struct Bode{T}
     args::T
 end
 
-@recipe function f(n::Bode)
+@recipe function f(n::Bode{<:Tuple{<:EISMeasurement}})
     eis = n.args[1]
     df = open(eis)
     ϕ = eis."phase"
@@ -42,5 +65,22 @@ end
         ylabel --> ϕ
         xscale --> :log10
         df[!, f], df[!, ϕ]
+    end
+end
+
+@recipe function f(n::Bode{<:Tuple{Vector{<:EISMeasurement}}})
+    uq_meta = find_unique_metadata(n.args[1])
+    for eis in n.args[1]
+        df = open(eis)
+        ϕ = eis."phase"
+        f = eis."freq"
+        @series begin
+            seriestype --> :scatter
+            xlabel --> f
+            ylabel --> ϕ
+            xscale --> :log10
+            label --> unique_metadata_legend(eis, uq_meta)
+            df[!, f], df[!, ϕ]
+        end
     end
 end

@@ -1,5 +1,12 @@
-struct GCDMeasurement{D} <: AbstractMeasurement
-    dataset::D
+struct GCDMeasurement <: AbstractMeasurement
+    dataset::DataSet
+    global_procedure::Dict{String,Any}
+end
+
+function GCDMeasurement(project::MeasurementsProject, name)
+    d = dataset(project, name)
+    proc = select_procedure(d, project.procedures)
+    GCDMeasurement(d, proc)
 end
 
 default_select(gcd::GCDMeasurement) = [gcd."potential", gcd."time"]
@@ -20,5 +27,15 @@ end
         xlabel --> t
         ylabel --> V
         df[!, t], df[!, V]
+    end
+end
+
+@recipe function f(gcds::Vector{<:GCDMeasurement})
+    uq_meta = find_unique_metadata(gcds)
+    for gcd in gcds
+        @series begin
+            label --> unique_metadata_legend(gcd, uq_meta)
+            gcd
+        end
     end
 end
