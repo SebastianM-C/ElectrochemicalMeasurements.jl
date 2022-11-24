@@ -9,6 +9,16 @@ function EISMeasurement(project::MeasurementsProject, dataset::DataSet)
     proc = select_procedure(dataset, project.procedures)
     EISMeasurement(dataset, proc)
 end
+
+function take_subset(eis::EISMeasurement, df)
+    freq = eis."freq"
+    if haskey(procedure(eis)["preprocessing"], "max_freq")
+        max_freq = procedure(eis)["preprocessing"]["max_freq"]
+        idxs = findall(≤(max_freq), df[!, freq])
+        df[idxs, :]
+    else
+        df
+    end
 end
 
 @userplot struct Nyquist{T}
