@@ -31,13 +31,15 @@ end
     re_Z = eis."Re_Z"
     im_Z = eis."Im_Z"
     Z_max = max(maximum(df[!, re_Z]), maximum(df[!, im_Z]))
+    re_Z_min = minimum(df[!, re_Z])
+    im_Z_min = minimum(df[!, im_Z])
     @series begin
         seriestype --> :scatter
         xlabel --> re_Z
         ylabel --> im_Z
         aspect_ratio := 1
-        xlims --> (0, Z_max * 1.05)
-        ylims --> (0, Z_max * 1.05)
+        xlims --> (re_Z_min * 0.95, Z_max * 1.05)
+        ylims --> (im_Z_min * 0.95, Z_max * 1.05)
         df[!, re_Z], df[!, im_Z]
     end
 end
@@ -49,13 +51,15 @@ end
         re_Z = eis."Re_Z"
         im_Z = eis."Im_Z"
         Z_max = max(maximum(df[!, re_Z]), maximum(df[!, im_Z]))
+        re_Z_min = minimum(df[!, re_Z])
+        im_Z_min = minimum(df[!, im_Z])
         @series begin
             seriestype --> :scatter
             xlabel --> re_Z
             ylabel --> im_Z
             aspect_ratio := 1
-            xlims --> (0, Z_max * 1.05)
-            ylims --> (0, Z_max * 1.05)
+            xlims --> (re_Z_min * 0.95, Z_max * 1.05)
+            ylims --> (im_Z_min * 0.95, Z_max * 1.05)
             label --> unique_metadata_legend(eis, uq_meta)
             df[!, re_Z], df[!, im_Z]
         end
