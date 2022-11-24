@@ -3,10 +3,11 @@ struct CVMeasurement <: AbstractMeasurement
     global_procedure::Dict{String,Any}
 end
 
-function CVMeasurement(project::MeasurementsProject, name)
-    d = dataset(project, name)
-    proc = select_procedure(d, project.procedures)
-    CVMeasurement(d, proc)
+CVMeasurement(project::MeasurementsProject, name) = CVMeasurement(project, dataset(project, name))
+
+function CVMeasurement(project::MeasurementsProject, dataset::DataSet)
+    proc = select_procedure(dataset, project.procedures)
+    CVMeasurement(dataset, proc)
 end
 
 function take_subset(cv::CVMeasurement, df)

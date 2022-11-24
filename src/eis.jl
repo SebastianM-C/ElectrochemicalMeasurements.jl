@@ -3,10 +3,12 @@ struct EISMeasurement <: AbstractMeasurement
     global_procedure::Dict{String,Any}
 end
 
-function EISMeasurement(project::MeasurementsProject, name)
-    d = dataset(project, name)
-    proc = select_procedure(d, project.procedures)
-    EISMeasurement(d, proc)
+EISMeasurement(project::MeasurementsProject, name) = EISMeasurement(project, dataset(project, name))
+
+function EISMeasurement(project::MeasurementsProject, dataset::DataSet)
+    proc = select_procedure(dataset, project.procedures)
+    EISMeasurement(dataset, proc)
+end
 end
 
 @userplot struct Nyquist{T}
