@@ -5,7 +5,7 @@ end
 
 GCDMeasurement(project::MeasurementsProject, name) = GCDMeasurement(project, dataset(project, name))
 
-function GCDMeasurement(project::MeasurementsProject, dataset)
+function GCDMeasurement(project::MeasurementsProject, dataset::DataSet)
     proc = select_procedure(dataset, project.procedures)
     GCDMeasurement(dataset, proc)
 end
