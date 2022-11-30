@@ -28,6 +28,7 @@ end
 take_subset(::AbstractMeasurement, df) = df
 
 Base.getproperty(m::AbstractMeasurement, name::String) = procedure(m)["columns"][name]
+Base.nameof(m::AbstractMeasurement) = m.dataset["name"]
 
 include("project.jl")
 include("eis.jl")
