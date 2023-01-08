@@ -3,10 +3,22 @@ struct EISMeasurement <: AbstractMeasurement
     global_procedure::Dict{String,Any}
 end
 
-function EISMeasurement(project::MeasurementsProject, name)
-    d = dataset(project, name)
-    proc = select_procedure(d, project.procedures)
-    EISMeasurement(d, proc)
+EISMeasurement(project::MeasurementsProject, name) = EISMeasurement(project, dataset(project, name))
+
+function EISMeasurement(project::MeasurementsProject, dataset::DataSet)
+    proc = select_procedure(dataset, project.procedures)
+    EISMeasurement(dataset, proc)
+end
+
+function take_subset(eis::EISMeasurement, df)
+    freq = eis."freq"
+    if haskey(procedure(eis)["preprocessing"], "max_freq")
+        max_freq = procedure(eis)["preprocessing"]["max_freq"]
+        idxs = findall(≤(max_freq), df[!, freq])
+        df[idxs, :]
+    else
+        df
+    end
 end
 
 @userplot struct Nyquist{T}
@@ -19,13 +31,15 @@ end
     re_Z = eis."Re_Z"
     im_Z = eis."Im_Z"
     Z_max = max(maximum(df[!, re_Z]), maximum(df[!, im_Z]))
+    re_Z_min = minimum(df[!, re_Z])
+    im_Z_min = minimum(df[!, im_Z])
     @series begin
         seriestype --> :scatter
         xlabel --> re_Z
         ylabel --> im_Z
         aspect_ratio := 1
-        xlims --> (0, Z_max * 1.05)
-        ylims --> (0, Z_max * 1.05)
+        xlims --> (re_Z_min * 0.95, Z_max * 1.05)
+        ylims --> (im_Z_min * 0.95, Z_max * 1.05)
         df[!, re_Z], df[!, im_Z]
     end
 end
@@ -37,13 +51,15 @@ end
         re_Z = eis."Re_Z"
         im_Z = eis."Im_Z"
         Z_max = max(maximum(df[!, re_Z]), maximum(df[!, im_Z]))
+        re_Z_min = minimum(df[!, re_Z])
+        im_Z_min = minimum(df[!, im_Z])
         @series begin
             seriestype --> :scatter
             xlabel --> re_Z
             ylabel --> im_Z
             aspect_ratio := 1
-            xlims --> (0, Z_max * 1.05)
-            ylims --> (0, Z_max * 1.05)
+            xlims --> (re_Z_min * 0.95, Z_max * 1.05)
+            ylims --> (im_Z_min * 0.95, Z_max * 1.05)
             label --> unique_metadata_legend(eis, uq_meta)
             df[!, re_Z], df[!, im_Z]
         end
