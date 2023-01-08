@@ -1,11 +1,18 @@
-struct CVMeasurement{D} <: AbstractMeasurement
-    dataset::D
+struct CVMeasurement <: AbstractMeasurement
+    dataset::DataSet
+    global_procedure::Dict{String,Any}
 end
 
-default_select(cv::CVMeasurement) = [cv."current", cv."potential", cv."scan"]
+CVMeasurement(project::MeasurementsProject, name) = CVMeasurement(project, dataset(project, name))
+
+function CVMeasurement(project::MeasurementsProject, dataset::DataSet)
+    proc = select_procedure(dataset, project.procedures)
+    CVMeasurement(dataset, proc)
+end
 
 function take_subset(cv::CVMeasurement, df)
-    fd = df[df[!, cv."scan"] .== cv."select_scan", :]
+    select_scan = procedure(cv)["preprocessing"]["select_scan"]
+    fd = df[df[!, cv."scan"].==select_scan, :]
     push!(fd, fd[1, :])
 end
 
@@ -17,5 +24,15 @@ end
         xlabel --> V
         ylabel --> I
         df[!, V], df[!, I]
+    end
+end
+
+@recipe function f(cvs::Vector{<:CVMeasurement})
+    uq_meta = find_unique_metadata(cvs)
+    for cv in cvs
+        @series begin
+            label --> unique_metadata_legend(cv, uq_meta)
+            cv
+        end
     end
 end
