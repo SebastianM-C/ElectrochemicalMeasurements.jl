@@ -7,6 +7,7 @@ CVMeasurement(project::MeasurementsProject, name) = CVMeasurement(project, datas
 
 function CVMeasurement(project::MeasurementsProject, dataset::DataSet)
     proc = select_procedure(dataset, project.procedures)
+    merge_global_metadata!(dataset, proc)
     CVMeasurement(dataset, proc)
 end
 

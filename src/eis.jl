@@ -7,6 +7,7 @@ EISMeasurement(project::MeasurementsProject, name) = EISMeasurement(project, dat
 
 function EISMeasurement(project::MeasurementsProject, dataset::DataSet)
     proc = select_procedure(dataset, project.procedures)
+    merge_global_metadata!(dataset, proc)
     EISMeasurement(dataset, proc)
 end
 

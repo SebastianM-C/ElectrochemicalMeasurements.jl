@@ -29,3 +29,15 @@ Base.keys(p::MeasurementsProject) = keys(p.data_project)
 function Base.get(p::MeasurementsProject, name::AbstractString, default)
     get(p.data_project, name, default)
 end
+
+function merge_global_metadata!(dataset, procedure)
+    if haskey(procedure, "metadata")
+        global_metadata = procedure["metadata"]
+        local_metadata = metadata(dataset)
+        for (k, v) in global_metadata
+            if !haskey(local_metadata, k)
+                push!(local_metadata, k => v)
+            end
+        end
+    end
+end

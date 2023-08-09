@@ -7,6 +7,7 @@ GCDMeasurement(project::MeasurementsProject, name) = GCDMeasurement(project, dat
 
 function GCDMeasurement(project::MeasurementsProject, dataset::DataSet)
     proc = select_procedure(dataset, project.procedures)
+    merge_global_metadata!(dataset, proc)
     GCDMeasurement(dataset, proc)
 end
 
