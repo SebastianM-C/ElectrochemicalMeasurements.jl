@@ -25,7 +25,12 @@ default_select(gcd::GCDMeasurement) = [gcd."potential", gcd."time"]
 function take_subset(gcd::GCDMeasurement, df)
     V = gcd."potential"
     # make this opt-in
-    idx = findfirst(<(0), df[!, V]) - 1
+    cycle_type = metadata(gcd)["cycle_type"]
+    if cycle_type == "positive"
+        idx = findfirst(<(0), df[!, V]) - 1
+    else
+        idx = findfirst(>(0), df[!, V]) - 1
+    end
     df[1:idx, :]
 end
 

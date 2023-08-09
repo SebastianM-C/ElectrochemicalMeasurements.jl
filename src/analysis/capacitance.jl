@@ -12,8 +12,15 @@ function capacitance(gcd::GCDMeasurement)
     I = unitful_metadata(gcd, "charging_current")
     df = open(gcd)
     t, V = df[!, gcd."time"], df[!, gcd."potential"]
-    idxs = findall(v -> v > 0, V)
-    t, V = t[idxs], V[idxs]
+    cycle_type = metadata(gcd)["cycle_type"]
+    if cycle_type == "positive"
+        idxs = findall(v -> v > 0, V)
+        t, V = t[idxs], V[idxs]
+    else
+        idxs = findall(v -> v < 0, V)
+        t = t[idxs]
+        V = -V[idxs]
+    end
 
     ∫Vdt = integrate(t, V) * u"V*s"
     Δt = (t[end] - t[begin]) * u"s"
