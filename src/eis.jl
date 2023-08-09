@@ -10,6 +10,21 @@ function EISMeasurement(project::MeasurementsProject, dataset::DataSet)
     EISMeasurement(dataset, proc)
 end
 
+dataset_procedure(::Type{EISMeasurement}) = Dict(
+    Dict(
+        "name" => "EIS",
+        "columns" => Dict(
+            "Re_Z" => "Z' (Ω)",
+            "Im_Z" => "-Z'' (Ω)",
+            "phase" => "-Phase (°)",
+            "freq" => "Frequency (Hz)"
+        ),
+        "preprocessing" => Dict(
+            "max_freq" => 1.1e5
+        )
+    )
+)
+
 function take_subset(eis::EISMeasurement, df)
     freq = eis."freq"
     if haskey(procedure(eis)["preprocessing"], "max_freq")

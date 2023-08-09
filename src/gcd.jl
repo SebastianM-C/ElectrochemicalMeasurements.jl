@@ -10,6 +10,16 @@ function GCDMeasurement(project::MeasurementsProject, dataset::DataSet)
     GCDMeasurement(dataset, proc)
 end
 
+dataset_procedure(::Type{GCDMeasurement}) = Dict(
+    Dict(
+        "name" => "GCD",
+        "columns" => Dict(
+            "potential" => "WE(1).Potential (V)",
+            "time" => "Corrected time (s)"
+        )
+    )
+)
+
 default_select(gcd::GCDMeasurement) = [gcd."potential", gcd."time"]
 
 function take_subset(gcd::GCDMeasurement, df)

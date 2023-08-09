@@ -10,6 +10,25 @@ function CVMeasurement(project::MeasurementsProject, dataset::DataSet)
     CVMeasurement(dataset, proc)
 end
 
+dataset_procedure(::Type{CVMeasurement}) = Dict(
+    Dict(
+        "name" => "CV",
+        "columns" => Dict(
+            "current" => "WE(1).Current (A)",
+            "potential" => "WE(1).Potential (V)",
+            "time" => "Time (s)",
+            "scan" => "Scan"
+        ),
+        "preprocessing" => Dict(
+            "select_scan" => 2
+        ),
+        "analysis" => Dict(
+            "quadrant" => [2, 4],
+            "fixed_ΔV" => "0.9 V"
+        )
+    )
+)
+
 function take_subset(cv::CVMeasurement, df)
     select_scan = procedure(cv)["preprocessing"]["select_scan"]
     fd = df[df[!, cv."scan"].==select_scan, :]
