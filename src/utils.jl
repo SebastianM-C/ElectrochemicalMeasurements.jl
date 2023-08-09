@@ -81,3 +81,8 @@ function unitful_analysis(m, key)
         nothing
     end
 end
+
+function available_metadata(project::MeasurementsProject, measurement_filter, metadata_key)
+    m = metadata.(select_measurement(measurement_filter, project))
+    unique(map(Base.Fix2(getindex, metadata_key), m))
+end
